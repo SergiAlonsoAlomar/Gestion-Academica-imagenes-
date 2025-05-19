@@ -3,18 +3,17 @@ package test;
 import java.util.Collection;
 
 import dao.AcademiaDAO;
-import dao.AcademiaDAOImplJDBC;
+import dao.AcademiaDAOFactory;
 import entidades.Alumno;
 import entidades.Curso;
 import entidades.Matricula;
 
 public class BorrarHelper {
 
-    private AcademiaDAO dao = null;
+    private AcademiaDAO dao = AcademiaDAOFactory.getAcademiaDAO();
 
     public BorrarHelper() {
         System.out.println("Creando el DAO...");
-        dao = new AcademiaDAOImplJDBC();
     }
 
     private void borrarMatriculas() {

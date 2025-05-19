@@ -1,21 +1,39 @@
 package entidades;
 
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
+@Entity
+@Table(name = "matriculas")
 public class Matricula implements Serializable {
     private static final long serialVersionUID = 1L;
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_matricula")
     private long idMatricula;
-    private int idAlumno;
-    private int idCurso;
+    
+    @ManyToOne
+    @JoinColumn(name = "id_alumno")
+    private Alumno alumno;
+    
+    @ManyToOne
+    @JoinColumn(name = "id_curso")
+    private Curso curso;
+    
+    @Temporal(TemporalType.DATE)
+    @Column(name = "fecha_inicio")
     private Date fechaInicio;
 
     public Matricula() {}
 
     public Matricula(long idMatricula, int idAlumno, int idCurso, Date fechaInicio) {
         this.idMatricula = idMatricula;
-        this.idAlumno = idAlumno;
-        this.idCurso = idCurso;
+        this.alumno = new Alumno();
+        this.alumno.setIdAlumno(idAlumno);
+        this.curso = new Curso();
+        this.curso.setIdCurso(idCurso);
         this.fechaInicio = fechaInicio;
     }
 
@@ -28,19 +46,25 @@ public class Matricula implements Serializable {
     }
 
     public int getIdAlumno() {
-        return idAlumno;
+        return alumno != null ? alumno.getIdAlumno() : 0;
     }
 
     public void setIdAlumno(int idAlumno) {
-        this.idAlumno = idAlumno;
+        if (this.alumno == null) {
+            this.alumno = new Alumno();
+        }
+        this.alumno.setIdAlumno(idAlumno);
     }
 
     public int getIdCurso() {
-        return idCurso;
+        return curso != null ? curso.getIdCurso() : 0;
     }
 
     public void setIdCurso(int idCurso) {
-        this.idCurso = idCurso;
+        if (this.curso == null) {
+            this.curso = new Curso();
+        }
+        this.curso.setIdCurso(idCurso);
     }
 
     public Date getFechaInicio() {
@@ -53,6 +77,6 @@ public class Matricula implements Serializable {
 
     @Override
     public String toString() {
-        return idMatricula + " - " + idAlumno + " - " + idCurso + " - " + fechaInicio;
+        return idMatricula + " - " + getIdAlumno() + " - " + getIdCurso() + " - " + fechaInicio;
     }
 }

@@ -1,11 +1,22 @@
 package entidades;
 
+import jakarta.persistence.*;
 import java.io.Serializable;
 
+@Entity
+@Table(name = "alumnos")
 public class Alumno implements Serializable {
     private static final long serialVersionUID = 1L;
+    
+    @Id
+    @Column(name = "id_alumno")
     private int idAlumno;
+    
+    @Column(name = "nombre_alumno")
     private String nombreAlumno;
+    
+    @Lob
+    @Column(name = "foto")
     private byte[] foto;
 
     public Alumno() {}

@@ -4,16 +4,16 @@ import java.io.ByteArrayInputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
-
 import entidades.Alumno;
 import entidades.Curso;
 import entidades.Matricula;
+import util.Configuracion;
 
 public class AcademiaDAOImplJDBC implements AcademiaDAO {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/dbformacion";
-    private static final String USER = "root";
-    private static final String PASSWORD = "admin123";
+    private static final String URL = Configuracion.getJdbcUrl();
+    private static final String USER = Configuracion.getJdbcUser();
+    private static final String PASSWORD = Configuracion.getJdbcPassword();
 
     private static final String FIND_ALL_ALUMNOS_SQL = "SELECT id_alumno, nombre_alumno, foto FROM alumnos";
     private static final String ADD_ALUMNO_SQL = "INSERT INTO alumnos (id_alumno, nombre_alumno, foto) VALUES (?, ?, ?)";
@@ -32,6 +32,7 @@ public class AcademiaDAOImplJDBC implements AcademiaDAO {
     private static final String UPDATE_MATRICULA_SQL = "UPDATE matriculas SET fecha_inicio = ? WHERE id_matricula = ?";
     private static final String GET_MATRICULA_SQL = "SELECT id_matricula, id_alumno, id_curso, fecha_inicio FROM matriculas WHERE id_matricula = ?";
     private static final String DELETE_MATRICULA_SQL = "DELETE FROM matriculas WHERE id_matricula = ?";
+    private static final String GET_ID_MATRICULA_SQL = "SELECT id_matricula FROM matriculas WHERE id_alumno = ? AND id_curso = ?";
 
     public AcademiaDAOImplJDBC() {}
 
@@ -309,6 +310,28 @@ public class AcademiaDAOImplJDBC implements AcademiaDAO {
     }
 
     @Override
+    public long getIdMatricula(int idAlumno, int idCurso) {
+        Connection con = null;
+        try {
+            con = getConnection();
+            PreparedStatement ps = con.prepareStatement(GET_ID_MATRICULA_SQL);
+            ps.setInt(1, idAlumno);
+            ps.setInt(2, idCurso);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getLong("id_matricula");
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            releaseConnection(con);
+        }
+        return -1;
+    }
+
+    @Override
     public Matricula getMatricula(long idMatricula) {
         Connection con = null;
         try {
@@ -389,10 +412,4 @@ public class AcademiaDAOImplJDBC implements AcademiaDAO {
         }
         return result;
     }
-
-	@Override
-	public long getIdMatricula(int idAlumno, int idCurso) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }
